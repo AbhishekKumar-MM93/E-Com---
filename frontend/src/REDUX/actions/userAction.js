@@ -22,6 +22,12 @@ import {
   USER_DELETE_REQUEST,
   USER_DELETE_SUCCESS,
   USER_DELETE_FAILURE,
+  USER_GET_BY_ADMIN_REQUEST,
+  USER_GET_BY_ADMIN_SUCCESS,
+  USER_GET_BY_ADMIN_FAILURE,
+  USER_UPDATE_BY_ADMIN_REQUEST,
+  USER_UPDATE_BY_ADMIN_FAILURE,
+  USER_UPDATE_BY_ADMIN_SUCCESS,
 } from "../constants/userConstants";
 import { ORDER_LIST_MY_RESET } from "../constants/orderConstants";
 export const login = (DATA) => async (dispatch) => {
@@ -119,6 +125,7 @@ export const getUserDetails = (id) => async (dispacth, getState) => {
     });
   }
 };
+
 export const updateUserProfile = (user) => async (dispacth, getState) => {
   // in the form of id we take profile --underStand in profileScreen--
   try {
@@ -221,3 +228,77 @@ export const deleteUsers = (id) => async (dispacth, getState) => {
     });
   }
 };
+
+export const getUserByAdmin = (id) => async (dispacth, getState) => {
+  // in the form of id we take profile --underStand in profileScreen--
+  try {
+    dispacth({
+      type: USER_GET_BY_ADMIN_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        // 'Content-Type': "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await httpGet(`/api/users/getuserbyidadmin/${id}`, config); //we pass profile as id in profileScreen
+    dispacth({
+      type: USER_GET_BY_ADMIN_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispacth({
+      type: USER_GET_BY_ADMIN_FAILURE,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const updateUserByAdmin =
+  (id, userData) => async (dispacth, getState) => {
+    try {
+      dispacth({
+        type: USER_UPDATE_BY_ADMIN_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          // 'Content-Type': "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await httpPost.put(
+        `/api/users/updateuserbyadmin/${id}`,
+        userData,
+        config
+      );
+      dispacth({ type: USER_UPDATE_BY_ADMIN_SUCCESS });
+
+      dispacth({
+        type: USER_GET_BY_ADMIN_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispacth({
+        type: USER_UPDATE_BY_ADMIN_FAILURE,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };

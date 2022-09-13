@@ -4,79 +4,128 @@ import { Form, Row, Col, Button, FormGroup } from "react-bootstrap";
 import Message from "./Message";
 import Load from "./Loading";
 import FormContainer from "./FormContainer";
-import { getUserDetails } from "../../REDUX/actions/userAction";
-import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
+import {
+  getUserByAdmin,
+  updateUserByAdmin,
+} from "../../REDUX/actions/userAction";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { USER_UPDATE_BY_ADMIN_RESET } from "../../REDUX/constants/userConstants";
 
 export function UserEditScreen() {
   const userId = useParams().id;
+  const navigate = useNavigate();
 
   const [userData, setUserData] = useState();
+  const [check, setCheck] = useState();
 
   const dispatch = useDispatch();
 
-  const navigate = useNavigate();
+  const userGetByAdmin = useSelector((state) => state.userGetByAdmin);
+  const { loading, error, userByAdmin } = userGetByAdmin;
 
-  const userDetails = useSelector((state) => state.userDetails);
-  const { loading, error, user } = userDetails;
+  const userUpdateByAdmin = useSelector((state) => state.userUpdateByAdmin);
+  const {
+    loading: loadingUpdate,
+    error: errorUpdate,
+    success: successUpdate,
+  } = userUpdateByAdmin;
 
   const handleChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
+    setCheck({ ...check, [e.target.name]: e.target.checked });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(userData, check);
+    dispatch(
+      updateUserByAdmin(userId, {
+        name: userData.name,
+        email: userData.email,
+        isAdmin: check.isAdmin,
+        isVerified: check.isVerified,
+      })
+    );
   };
 
-  useEffect(() => {});
+  useEffect(() => {
+    if (successUpdate) {
+      dispatch({ type: USER_UPDATE_BY_ADMIN_RESET });
+      navigate("/admin/userlist");
+    } else {
+      if (userByAdmin?._id !== userId) {
+        dispatch(getUserByAdmin(userId));
+      } else {
+        setUserData({
+          name: userByAdmin.name,
+          email: userByAdmin.email,
+        });
+        setCheck({
+          isAdmin: userByAdmin.isAdmin,
+          isVerified: userByAdmin.isVerified,
+        });
+      }
+    }
+  }, [dispatch, userByAdmin, userId, successUpdate]);
 
   return (
-    <FormContainer>
-      <Form onSubmit={handleSubmit} onChange={handleChange}>
-        <h1>SignUp</h1>
+    <>
+      <Link to="/admin/userlist" className="btn btn-light my-3">
+        Go Back
+      </Link>
 
-        {error && <Message variant="danger" message={error} />}
-        {message && <Message variant="danger" message={message} />}
-        {loading && <Load />}
-        <FormGroup controlId="name">
-          <Form.Label> Name</Form.Label>
-          <Form.Control
-            type="name"
-            placeholder="Eneter name"
-            name="name"
-          ></Form.Control>
-        </FormGroup>
+      <FormContainer>
+        <h1>Edit User</h1>
+        {loading ? (
+          <Load />
+        ) : error ? (
+          <Message variant={"danger"} message={error} />
+        ) : (
+          <Form onSubmit={handleSubmit} onChange={handleChange}>
+            <FormGroup controlId="name">
+              <Form.Label> Name</Form.Label>
+              <Form.Control
+                type="name"
+                placeholder="Eneter name"
+                name="name"
+                value={userData?.name}
+              ></Form.Control>
+            </FormGroup>
 
-        <FormGroup controlId="email">
-          <Form.Label> Email Address</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Eneter email"
-            name="email"
-          ></Form.Control>
-        </FormGroup>
+            <FormGroup controlId="email">
+              <Form.Label> Email Address</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Eneter email"
+                name="email"
+                value={userData?.email}
+              ></Form.Control>
+            </FormGroup>
 
-        <FormGroup controlId="password">
-          <Form.Label> Enter Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Eneter password"
-            name="password"
-          ></Form.Control>
-        </FormGroup>
+            <FormGroup controlId="isadmin">
+              <Form.Check
+                type="checkbox"
+                name="isAdmin"
+                label="Is Admin"
+                checked={check?.isAdmin}
+              ></Form.Check>
+            </FormGroup>
 
-        <FormGroup controlId="confirmPassword">
-          <Form.Label> Confirm Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Confirm password"
-            name="confirmPassword"
-          ></Form.Control>
-        </FormGroup>
+            <FormGroup controlId="isVerified">
+              <Form.Check
+                type="checkbox"
+                label="Is Verified"
+                name="isVerified"
+                checked={check?.isVerified}
+              ></Form.Check>
+            </FormGroup>
 
-        <Button type="submit" variant="primary" className="my-4">
-          Update
-        </Button>
-      </Form>
-    </FormContainer>
+            <Button type="submit" variant="primary" className="my-4">
+              Update
+            </Button>
+          </Form>
+        )}
+      </FormContainer>
+    </>
   );
 }

@@ -16,6 +16,7 @@ import PaymentSreen from "./component/Screens/PaymentSreen";
 import { PlaceOrderScreen } from "./component/Screens/PlaceOrderScreen";
 import OrderScreen from "./component/Screens/OrderScreen";
 import UserListScreen from "./component/Screens/UserListScreen";
+import { UserEditScreen } from "./component/Screens/UserEditScreen";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/placeorder" element={<PlaceOrderScreen />} />
             <Route path="/order/:id" element={<OrderScreen />} />
             <Route path="/admin/userlist" element={<UserListScreen />} />
+            <Route path="/admin/user/:id/edit" element={<UserEditScreen />} />
             {/* <Route path="/color" element={<BTN />} /> */}
           </Routes>
         </Container>

@@ -86,7 +86,7 @@ function UserListScreen() {
                 </td>
 
                 <td className="d-flex justify-content-around align-items-center">
-                  <Link to={`admin/users/${user._id}/edit`}>
+                  <Link to={`/admin/user/${user._id}/edit`}>
                     <i
                       class="fa-solid fa-user-pen"
                       style={{ color: "orange" }}

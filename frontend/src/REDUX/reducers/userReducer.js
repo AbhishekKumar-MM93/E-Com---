@@ -19,6 +19,14 @@ import {
   USER_DELETE_REQUEST,
   USER_DELETE_SUCCESS,
   USER_DELETE_FAILURE,
+  USER_GET_BY_ADMIN_REQUEST,
+  USER_GET_BY_ADMIN_SUCCESS,
+  USER_GET_BY_ADMIN_FAILURE,
+  USER_GET_BY_ADMIN_RESET,
+  USER_UPDATE_BY_ADMIN_REQUEST,
+  USER_UPDATE_BY_ADMIN_SUCCESS,
+  USER_UPDATE_BY_ADMIN_FAILURE,
+  USER_UPDATE_BY_ADMIN_RESET,
 } from "../constants/userConstants";
 
 export function userLoginReducer(state = {}, action) {
@@ -98,6 +106,38 @@ export function userDeletetReducer(state = {}, action) {
     case USER_DELETE_FAILURE:
       return { loading: false, error: action.payload };
 
+    default:
+      return state;
+  }
+}
+
+export function getUserByAdminReducer(state = {}, action) {
+  switch (action.type) {
+    case USER_GET_BY_ADMIN_REQUEST:
+      return { loading: true };
+    case USER_GET_BY_ADMIN_SUCCESS:
+      return { loading: false, userByAdmin: action.payload };
+
+    case USER_GET_BY_ADMIN_FAILURE:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+}
+
+export function getUserUpdateByAdminReducer(state = { user: {} }, action) {
+  switch (action.type) {
+    case USER_UPDATE_BY_ADMIN_REQUEST:
+      return { loading: true };
+    case USER_UPDATE_BY_ADMIN_SUCCESS:
+      return { loading: false, success: true };
+
+    case USER_UPDATE_BY_ADMIN_FAILURE:
+      return { loading: false, error: action.payload };
+
+    case USER_UPDATE_BY_ADMIN_RESET:
+      return { user: {} };
     default:
       return state;
   }
