@@ -2,21 +2,33 @@ import bcrypt, { hash } from "bcrypt";
 import User from "../models/UserModel.js";
 import generateToken from "../Utilis/generateToken.js";
 import asyncHandler from "express-async-handler";
-
+import { Validator } from "node-input-validator";
+import { checkValidation, failed } from "../config/helper.js";
 // @route POST/api/users/login
 
 const authUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  // const { email, password } = req.body;
+  const v = new Validator(req.body, {
+    email: "required|email",
+    password: "required",
+  });
+  const value = JSON.parse(JSON.stringify(v));
+  const errorResponse = await checkValidation(v);
+  if (errorResponse) {
+    return failed(res.errorResponse);
+  }
 
-  const user = await User.findOne({ email });
-  if (user && (await bcrypt.compare(password, user.password))) {
+  const user = await User.findOne({ email: value.inputs.email });
+  if (user && (await bcrypt.compare(value.inputs.password, user.password))) {
+    let Token = generateToken(user._id);
     res.json({
       id: user._id,
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
       isVerified: user.isVerified,
-      token: generateToken(user._id),
+      Token_Time: Token.loginTime,
+      token: Token.token,
     });
   } else {
     res.status(400);

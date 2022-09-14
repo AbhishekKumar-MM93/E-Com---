@@ -44,22 +44,20 @@ const getUserByIdAdmin = asyncHandler(async (req, res) => {
 //@access Private/ADMIN
 
 const updateUserbyAdmin = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-  // console.log(user);
-
+  const { name, email, isAdmin, isVerified } = req.body;
+  const user = await User.findByIdAndUpdate(req.params.id, {
+    name,
+    email,
+    isAdmin,
+    isVerified,
+  });
   if (user) {
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-    user.isAdmin = req.body.isAdmin || user.isAdmin;
-
-    const updatedUser = await user.save();
-
     res.json({
-      id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      isAdmin: updatedUser.isAdmin,
-      isVerified: updatedUser.isVerified,
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      isVerified: user.isVerified,
     });
   } else {
     res.send(404);

@@ -2,24 +2,42 @@ import User from "../models/UserModel.js";
 import bcrypt from "bcrypt";
 import expressAsyncHandler from "express-async-handler";
 import genrateToken from "../Utilis/generateToken.js";
+import { Validator } from "node-input-validator";
+import {
+  success,
+  failed,
+  error,
+  unixTimestamp,
+  fileUpload,
+  checkValidation,
+} from "../config/helper.js";
 
 const createUser = expressAsyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  // const { email, password } = req.body;
 
-  const userExsist = await User.findOne({ email });
+  const v = new Validator(req.body, {
+    name: "required",
+    email: "required|email",
+    password: "required",
+  });
+  const Values = JSON.parse(JSON.stringify(v));
+  const errorResponse = await checkValidation(v);
+  if (errorResponse) {
+    return failed(res, errorResponse);
+  }
+
+  const userExsist = await User.findOne({ email: Values.inputs.email });
   if (userExsist) {
     res.status(400);
     throw new Error("User All Ready Exsist");
-  } else if (!password) {
-    res.status(400);
-    throw new Error("Invalid user Data");
   }
 
-/// craete our user data and register data
+  /// craete our user data and register data
   const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
+  const hash = await bcrypt.hash(Values.inputs.password, salt);
 
-  const user = await User.create({ ...req.body, password: hash });
+  const user = await User.create({ ...Values.inputs, password: hash });
+  const Token = genrateToken(user._id);
   if (user) {
     res.status(201);
     res.json({
@@ -28,12 +46,12 @@ const createUser = expressAsyncHandler(async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
       isVerified: user.isVerified,
-      token: genrateToken(user._id),
+      Login_Time: Token.loginTime,
+      token: Token.token,
     });
-  } 
-  else {
-  res.status(400);
-  throw new Error("Invalid email or password");
+  } else {
+    res.status(400);
+    throw new Error("Invalid email or password");
   }
 });
 

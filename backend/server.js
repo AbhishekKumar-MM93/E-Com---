@@ -26,6 +26,10 @@ app.use("/api/config/paypal", (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 );
 
+app.use("/api/config/recaptcha", (req, res) =>
+  res.send(process.env.GOOGLE_SITE_KEY)
+);
+
 app.use(notFound);
 app.use(errorHandler);
 
