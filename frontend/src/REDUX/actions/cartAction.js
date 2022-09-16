@@ -7,7 +7,7 @@ import {
 import { httpGet } from "../../Config/Config";
 
 const addToCart = (id, qty) => async (dispatch, getState) => {
-  const { data } = await httpGet(`/api/products/${id}`);
+  const { data } = await httpGet(`/api/products/getproduct/${id}`);
 
   dispatch({
     type: ADD_CART_ITEM,
