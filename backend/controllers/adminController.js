@@ -1,4 +1,5 @@
 import User from "../models/UserModel.js";
+import Product from "../models/ProductModel.js";
 import asyncHandler from "express-async-handler";
 
 // @route GETapi/users
@@ -10,6 +11,10 @@ const getUsersforAdmin = asyncHandler(async (req, res) => {
   res.json(users);
 });
 
+//@desc Delete api/users
+//@route Delete/api/users/deletebyadmin/:id"
+//@access Private
+
 const userDeleteByAdmin = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   // console.log(user);
@@ -20,6 +25,21 @@ const userDeleteByAdmin = asyncHandler(async (req, res) => {
   } else {
     res.status(404);
     throw new Error("User not found");
+  }
+});
+
+//@desc Delete api/products
+//@route Delete/api/users/deletebyadminproduct/:id"
+//@access Private
+
+const productDeleteByAdmin = asyncHandler(async (req, res) => {
+  const product = await Product.findByIdAndDelete(req.params.id);
+  console.log("PRODUCT-", product);
+  if (product) {
+    res.json({ message: "product removed" });
+  } else {
+    res.status(404);
+    throw new Error("product not found");
   }
 });
 
@@ -70,4 +90,5 @@ export {
   userDeleteByAdmin,
   getUserByIdAdmin,
   updateUserbyAdmin,
+  productDeleteByAdmin,
 };

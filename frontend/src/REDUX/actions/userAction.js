@@ -212,7 +212,7 @@ export const deleteUsers = (id) => async (dispacth, getState) => {
     };
 
     const { data } = await httpPost.delete(
-      `/api/users//deletebyadmin/${id}`,
+      `/api/users/deletebyadmin/${id}`,
       config
     );
     dispacth({

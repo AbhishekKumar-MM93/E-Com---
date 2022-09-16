@@ -19,19 +19,19 @@ function ProjectScreen() {
   const navigate = useNavigate();
   const [qty, setQty] = useState(1);
   const dispatch = useDispatch();
-  let { id } = useParams();
+  let ID = useParams().id;
 
   const { error, loading, product } = useSelector(
     (state) => state.productDetail
   );
 
   useEffect(() => {
-    dispatch(singleProduct(id));
+    dispatch(singleProduct(ID));
   }, [dispatch]);
 
   const addToCartHandler = () => {
     navigate({
-      pathname: `/cart/${id}`,
+      pathname: `/cart/${ID}`,
       search: `qty=${qty}`,
     });
   };

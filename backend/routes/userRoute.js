@@ -18,6 +18,7 @@ import {
   updateUserbyAdmin,
   userDeleteByAdmin,
 } from "../controllers/adminController.js";
+import { authenticateHeader } from "../config/checkHeaderKey.js";
 
 const userRouter = express.Router();
 
@@ -28,7 +29,7 @@ userRouter.route("/createuser").post(createUser),
   userRouter.delete("deleteuser/:id", deleteUser);
 
 ////
-userRouter.post("/login", authUser);
+userRouter.post("/login", authenticateHeader, authUser);
 userRouter
   .route("/profile")
   .get(authMiddleware, getUserProfile)

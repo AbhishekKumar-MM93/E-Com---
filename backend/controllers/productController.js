@@ -46,9 +46,12 @@ async function updateProduct(req, res) {
   }
 }
 
+//@desc  Delete a product
+//@access Delete/api/products/:id
+//route
 async function deleteProduct(req, res) {
   try {
-    let result = await Product.deleteOne({ _id: req.params.id });
+    let result = await Product.findByIdAndDelete(req.params.id);
     res.status(200).send("Product deleted");
   } catch (error) {
     res.status(400).send(error.message);

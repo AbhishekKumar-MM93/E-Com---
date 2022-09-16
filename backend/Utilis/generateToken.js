@@ -3,7 +3,7 @@ import { unixTimestamp } from "../config/helper.js";
 
 const generateToken = (id) => {
   let token = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: "30m",
+    expiresIn: "1h",
   });
   const loginTime = unixTimestamp();
   return {

@@ -34,7 +34,13 @@ function OrderScreen() {
   useEffect(() => {
     const addPayPalScript = async () => {
       const { data: clientID } = await axios.get(
-        "http://localhost:3344/api/config/paypal"
+        "http://localhost:3344/api/config/paypal",
+        {
+          headers: {
+            publish_key: "PK_C2cZ9IGQZBCytX7wMvjevMKMP1idZ3BQopBpOg==",
+            secret_key: "SK_LZnc3jfHw4d36ze55GQW3f97BTK7aE2rJBwLXEw=",
+          },
+        }
       );
       const script = document.createElement("script");
       script.type = "text/javascript";
